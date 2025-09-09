@@ -1,0 +1,371 @@
+.calendarBox {
+    box-sizing: border-box;
+    border: 1px solid rgb(20, 20, 20);
+    width: calc(100% / 7);
+    min-height: calc((100vh - 75px) / 6);
+    float: left;
+    color: white;
+    text-align: center;
+    padding-top: 0.3vh;
+    font-size: 1.8vh;
+}
+
+.firstRowBox {
+    border-top: 0;
+}
+
+.lastRowBox {
+    border-bottom: 2px solid rgb(20, 20, 20);
+}
+
+.firstColumnBox {
+    border-left: 2px solid rgb(20, 20, 20);
+}
+
+.lastColumnBox {
+    border-right: 2px solid rgb(20, 20, 20);
+}
+
+.eventInfoText {
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+    margin: 0;
+    color: white;
+    height: 25px;
+    line-height: 25px;
+}
+
+.eventInfoSelect {
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    text-align-last: center;
+    box-sizing: border-box;
+    height: 25px;
+    border: 1px solid rgb(120, 120, 120);
+}
+
+.eventInfoInput {
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    box-sizing: border-box;
+    text-align: center;
+    height: 25px;
+    border: 1px solid rgb(120, 120, 120);
+}
+
+.eventInfoButton {
+    position: absolute;
+    height: 50px;
+    color: white;
+    box-sizing: border-box;
+    border: 2px solid;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    border-radius: 8px;
+}
+
+.event {
+    box-sizing: border-box;
+    width: 90%;
+    background-color: green;
+    margin-left: 5%;
+    margin-top: 5%;
+    border-radius: 1vh;
+    font-size: 2vh;
+    text-align: left;
+    padding-left: 3%;
+    padding-right: 3%;
+    cursor: pointer;
+}
+
+.holiday {
+    box-sizing: border-box;
+    width: 90%;
+    background-color: blue;
+    margin-left: 5%;
+    margin-top: 5%;
+    border-radius: 1vh;
+    font-size: 2vh;
+    text-align: left;
+    padding-left: 3%;
+    padding-right: 3%;
+}
+
+#navbar {
+    position: fixed;
+    background-color: rgb(30, 30, 30);
+    width: 100vw;
+    height: 75px;
+    box-sizing: border-box;
+    border-bottom: 2px solid rgb(20, 20, 20);
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+#monthSelect {
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    width: 100px;
+    height: 35px;
+    box-sizing: border-box;
+    left: calc(50vw - 115px);
+    top: 20px;
+    text-align-last: center;
+}
+
+#yearInput {
+    position: absolute;
+    font-family: 'Open Sans', sans-serif;
+    width: 70px;
+    height: 35px;
+    box-sizing: border-box;
+    left: calc(50vw - 10px);
+    top: 20px;
+    text-align: center;
+}
+
+#goButton {
+    position: absolute;
+    width: 50px;
+    height: 35px;
+    box-sizing: border-box;
+    left: calc(50vw + 65px);
+    top: 20px;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#invalidInput {
+    position: absolute;
+    color: red;
+    width: 100vw;
+    height: 20px;
+    box-sizing: border-box;
+    text-align: center;
+    font-family: 'Open Sans', sans-serif;
+    bottom: 5px;
+}
+
+#menu {
+    position: fixed;
+    background-color: rgb(40, 40, 40);
+    width: 16vw;
+    height: calc(100vh - 75px);
+    left: 0;
+    top: 75px;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+#menu div {
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+    margin-top: 3vh;
+    text-align: left;
+    padding-left: 1.5vw;
+}
+
+#addEventButton {
+    width: 10vw;
+    margin-top: 2vh;
+    color: rgb(0, 150, 255);
+    background-color: transparent;
+    box-sizing: border-box;
+    border: none;
+    outline: none;
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 600;
+    font-size: 2vh;
+}
+
+#addEventButton:hover {
+    background-color: rgb(30, 30, 30);
+}
+
+#calendar {
+    position: absolute;
+    left: 16vw;
+    top: 75px;
+    background-color: rgb(50, 50, 50);
+    width: 84vw;
+    height: calc(100% - 75px);
+    box-sizing: border-box;
+    font-family: 'Open Sans', sans-serif;
+    overflow-y: auto;
+    word-wrap: break-word;
+}
+
+#eventInfo {
+    position: absolute;
+    width: 400px;
+    height: 250px;
+    left: calc(50vw - 200px);
+    top: calc(50vh - 125px);
+    z-index: 2;
+    background-color: rgb(75, 75, 75);
+    border: 2px solid rgb(30, 30, 30);
+    font-family: 'Open Sans', sans-serif;
+}
+
+#eventInfoHeading {
+    position: absolute;
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    color: white;
+    text-align: center;
+    top: 5px;
+    font-size: 25px;
+}
+
+#eventInfoEventText {
+    width: 55px;
+    left: 20px;
+    top: 45px;
+}
+
+#eventInfoEventInput {
+    width: 305px;
+    left: 75px;
+    top: 45px;
+    text-align: left;
+}
+
+#eventInfoDateText {
+    width: 50px;
+    left: 20px;
+    top: 75px;
+}
+
+#eventInfoMonthSelect {
+    width: 100px;
+    top: 75px;
+    left: 70px;
+}
+
+#eventInfoDateInput {
+    width: 50px;
+    top: 75px;
+    left: 175px;
+}
+
+#eventInfoYearInput {
+    width: 70px;
+    top: 75px;
+    left: 230px;
+}
+
+#eventInfoTimeText {
+    width: 50px;
+    left: 20px;
+    top: 105px;
+}
+
+#eventInfoTimeCheckbox {
+    position: absolute;
+    left: 70px;
+    top: 110px;
+    box-sizing: border-box;
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}
+
+#eventInfoHourInput {
+    width: 40px;
+    top: 105px;
+    left: 100px;
+}
+
+#eventInfoTimeColon {
+    width: 5px;
+    left: 145px;
+    top: 105px;
+}
+
+#eventInfoMinuteInput {
+    width: 40px;
+    top: 105px;
+    left: 155px;
+}
+
+#eventInfoTimePeriodSelect {
+    width: 50px;
+    top: 105px;
+    left: 200px;
+}
+
+#eventInfoReminderText {
+    width: 85px;
+    left: 20px;
+    top: 135px;
+}
+
+#eventInfoReminderCheckbox {
+    position: absolute;
+    left: 105px;
+    top: 140px;
+    box-sizing: border-box;
+    margin: 0;
+    width: 15px;
+    height: 15px;
+}
+
+#eventInfoReminderInput {
+    width: 50px;
+    top: 135px;
+    left: 135px;
+}
+
+#eventInfoReminderUnit {
+    width: 85px;
+    top: 135px;
+    left: 190px;
+}
+
+#eventInfoBeforeText {
+    width: 50px;
+    left: 280px;
+    top: 135px;
+}
+
+#createEventButton {
+    width: 170px;
+    left: 20px;
+    bottom: 20px;
+    background-color: rgb(0, 175, 0);
+    border-color: rgb(0, 75, 0);
+}
+
+#cancelEventButton {
+    width: 170px;
+    right: 20px;
+    bottom: 20px;
+    background-color: rgb(200, 0, 0);
+    border-color: rgb(100, 0, 0);
+}
+
+#saveEventButton {
+    width: 110px;
+    left: 20px;
+    bottom: 20px;
+    background-color: rgb(0, 175, 0);
+    border-color: rgb(0, 75, 0);
+}
+
+#cancelEventEditsButton {
+    width: 110px;
+    left: 145px;
+    bottom: 20px;
+    background-color: rgb(125, 125, 125);
+    border-color: rgb(50, 50, 50);
+}
+
+#deleteEventButton {
+    width: 110px;
+    right: 20px;
+    bottom: 20px;
+    background-color: rgb(200, 0, 0);
+    border-color: rgb(100, 0, 0);
+}
