@@ -419,7 +419,7 @@ function addEvent() {
         reminderUnit = eventInfoReminderUnit.value;
     }
 
-    events.push({
+    const dataToPush = {
         name: eventName,
         month: month,
         date: date,
@@ -429,6 +429,38 @@ function addEvent() {
         timePeriod: timePeriod,
         reminderInput: reminderInput,
         reminderUnit: reminderUnit
+    };
+
+    // Save to database
+    fetch("http://localhost:3000/api/events", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dataToPush)
+    })
+    .then(r => r.json())
+    .then(savedEvent => {
+        console.log("Event saved:", savedEvent);
+
+        // Save it locally with the ID included
+        events.push({
+            ...dataToPush,
+            id: savedEvent._id // Store ID
+        });
+
+        // Update UI
+        updateCalendarBoxes();
+    })
+    .catch(err => {
+        console.warn("Database not available, saving locally:", err);
+
+        // Save locally without an ID
+        events.push({
+            ...dataToPush,
+            id: null
+        });
+
+        // Update UI
+        updateCalendarBoxes();
     });
 }
 
@@ -437,50 +469,99 @@ function closeEventInfoBox() {
     eventViewingIndex = null;
 }
 
-function saveEventEdits() {
+async function saveEventEdits() {
     const isInputValid = validateEventInput();
 
     if (!isInputValid) {
         return;
     }
 
-    const eventViewingArray = events[eventViewingIndex];
+    const idx = eventViewingIndex;
+    const eventViewingArray = events[idx];
 
-    eventViewingArray.name = String(eventInfoEventInput.value);
-    eventViewingArray.month = Number(eventInfoMonthSelect.value);
-    eventViewingArray.date = Number(eventInfoDateInput.value);
-    eventViewingArray.year = Number(eventInfoYearInput.value);
+    const dataToPush = {
+        name: String(eventInfoEventInput.value),
+        month: Number(eventInfoMonthSelect.value),
+        date: Number(eventInfoDateInput.value),
+        year: Number(eventInfoYearInput.value),
 
-    if (eventInfoTimeCheckbox.checked) {
-        eventViewingArray.hour = Number(eventInfoHourInput.value);
-        eventViewingArray.minute = Number(eventInfoMinuteInput.value);
-        eventViewingArray.timePeriod = eventInfoTimePeriodSelect.value;
-    }
-    else {
-        eventViewingArray.hour = null;
-        eventViewingArray.minute = null;
-        eventViewingArray.timePeriod = null;
-    }
+        hour: eventInfoTimeCheckbox.checked ? Number(eventInfoHourInput.value) : null,
+        minute: eventInfoTimeCheckbox.checked ? Number(eventInfoMinuteInput.value) : null,
+        timePeriod: eventInfoTimeCheckbox.checked ? eventInfoTimePeriodSelect.value : null,
 
-    if (eventInfoReminderCheckbox.checked) {
-        eventViewingArray.reminderInput = Number(eventInfoReminderInput.value);
-        eventViewingArray.reminderUnit = eventInfoReminderUnit.value;
-    }
-    else {
-        eventViewingArray.reminderInput = null;
-        eventViewingArray.reminderUnit = null;
+        reminderInput: eventInfoReminderCheckbox.checked ? Number(eventInfoReminderInput.value) : null,
+        reminderUnit: eventInfoReminderCheckbox.checked ? eventInfoReminderUnit.value : null
+    };
+
+    if (!eventViewingArray?.id) {
+        console.warn("Event not found in database; updating locally.");
+        events[idx] = dataToPush;
+        updateCalendarBoxes();
+        closeEventInfoBox();
+        return;
     }
 
-    updateCalendarBoxes();
-    closeEventInfoBox();
-}
+    try {
+        const res = await fetch(`http://localhost:3000/api/events/${eventViewingArray.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dataToPush)
+        });
 
-function deleteEvent() {
-    if (eventViewingIndex != null) {
-        events.splice(eventViewingIndex, 1);
+        if (!res.ok) throw new Error("Server update failed");
+        const updated = await res.json();
+
+        // Update local array
+        events[idx] = {
+            id: updated._id,
+            name: updated.name,
+            month: Number(updated.month),
+            date: Number(updated.date ?? updated.day),
+            year: Number(updated.year),
+            hour: updated.hour ?? null,
+            minute: updated.minute ?? null,
+            timePeriod: updated.timePeriod ?? null,
+            reminderInput: updated.reminderInput ?? null,
+            reminderUnit: updated.reminderUnit ?? null
+        };
 
         updateCalendarBoxes();
         closeEventInfoBox();
+    } catch (err) {
+        console.error(err);
+        alert("Failed to save changes to server.");
+    }
+}
+
+async function deleteEvent() {
+    if (eventViewingIndex == null) {
+        return;
+    }
+
+    const toDelete = events[eventViewingIndex];
+
+    if (!toDelete?.id) {
+        console.warn("Event not found in database, deleting locally.");
+        events.splice(eventViewingIndex, 1);
+        updateCalendarBoxes();
+        closeEventInfoBox();
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:3000/api/events/${toDelete.id}`, { method: 'DELETE' });
+
+        if (!res.ok) {
+            throw new Error("Server delete failed");
+        }
+
+        // Update UI
+        events.splice(eventViewingIndex, 1);
+        updateCalendarBoxes();
+        closeEventInfoBox();
+    } catch (err) {
+        console.error(err);
+        alert("Failed to delete from server.");
     }
 }
 
@@ -509,6 +590,32 @@ function displayTimeInputs() {
         eventInfoTimeColon.setAttribute("hidden", "");
         eventInfoMinuteInput.setAttribute("hidden", "");
         eventInfoTimePeriodSelect.setAttribute("hidden", "");
+    }
+}
+
+async function loadEvents() {
+    try {
+        const res = await fetch("http://localhost:3000/api/events");
+        if (!res.ok) throw new Error("Network response error.");
+        const data = await res.json();
+
+        // Copy into local array
+        events = data.map(e => ({
+            id: e._id,
+            name: e.name,
+            month: Number(e.month),
+            date: Number(e.date),
+            year: Number(e.year),
+            hour: e.hour != null ? Number(e.hour) : null,
+            minute: e.minute != null ? Number(e.minute) : null,
+            timePeriod: e.timePeriod,
+            reminderInput: e.reminderInput,
+            reminderUnit: e.reminderUnit
+        }));
+
+        console.log("Loaded events:", events);
+    } catch (err) {
+        console.error("Failed to load events", err);
     }
 }
 
@@ -577,6 +684,8 @@ $(eventInfoReminderCheckbox).on("change", displayReminderInputs);
 
 window.addEventListener("resize", updateCalendarBoxes);
 
-// ----- CODE -----
-
-displayCurrentCalendar();
+document.addEventListener("DOMContentLoaded", async () => {
+    displayCurrentCalendar();  // Draw calendar
+    await loadEvents();        // Fill events from database
+    displayEvents();           // Display events
+});
